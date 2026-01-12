@@ -105,7 +105,7 @@ const Scheduler: React.FC<SchedulerProps> = ({ schedule, onUpdate }) => {
                                         onChange={(e) => handleDayChange(idx, 'allowance', parseInt(e.target.value) || 0)}
                                         className="w-full bg-transparent text-3xl font-mono font-bold text-white focus:outline-none placeholder-white/10"
                                      />
-                                     <span className="text-sm font-bold text-white/20 uppercase tracking-widest mr-2">MINS</span>
+                                     <span className="text-sm font-bold text-white/20 uppercase tracking-widest mr-2">min</span>
                                 </div>
                             </div>
 

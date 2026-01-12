@@ -61,8 +61,11 @@ const Forecast: React.FC<ForecastProps> = ({ schedule, currentDayIndex, bankBala
                             {day.dayName}
                         </span>
                         
-                        <div className="text-xl font-display tracking-tight text-white mb-1">
-                            {day.allowance}
+                        <div className="flex items-end gap-1 mb-1">
+                            <span className="text-xl font-display tracking-tight text-white">
+                                {day.allowance}
+                            </span>
+                            <span className="text-[10px] uppercase tracking-widest text-white/60 font-bold">min</span>
                         </div>
                         
                         <div className={`h-1 w-full rounded-full ${day.isWeekend ? 'bg-purple-500' : 'bg-blue-500/50'}`}></div>

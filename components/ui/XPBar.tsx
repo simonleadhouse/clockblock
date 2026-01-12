@@ -16,7 +16,7 @@ const XPBar: React.FC<XPBarProps> = ({ current, max, isOverdraft }) => {
             {isOverdraft ? 'CRITICAL OVERDRAFT' : 'ENERGY'}
         </span>
         <span className="font-display font-bold text-xl text-white/80">
-            {isOverdraft ? `-${Math.abs(current)}m` : `${current}m`} / {max}m
+            {isOverdraft ? `-${Math.abs(current)} min` : `${current} min`} / {max} min
         </span>
       </div>
       
@@ -44,7 +44,7 @@ const XPBar: React.FC<XPBarProps> = ({ current, max, isOverdraft }) => {
       
       {isOverdraft && (
         <div className="mt-3 text-center text-sm text-red-400 font-bold bg-red-900/30 rounded-lg p-2 border border-red-500/30 animate-pulse">
-            ⚠️ COST PENALTY: -{Math.abs(current) * 2} MINS TOMORROW
+            ⚠️ COST PENALTY: -{Math.abs(current) * 2} min tomorrow
         </div>
       )}
     </div>

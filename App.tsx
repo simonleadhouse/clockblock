@@ -6,6 +6,8 @@ import Onboarding from './components/Onboarding';
 import { AppState, ViewMode, DailyLog, WeeklySchedule } from './types';
 import { DEFAULT_CONFIG, DEFAULT_WEEKLY_SCHEDULE } from './constants';
 
+const BUDGET_TICK_MS = 60_000;
+
 const App: React.FC = () => {
   const [view, setView] = useState<ViewMode>(ViewMode.ONBOARDING);
   
@@ -47,7 +49,7 @@ const App: React.FC = () => {
           }
           return newValue;
         });
-      }, 1000); 
+      }, BUDGET_TICK_MS); 
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
     }
@@ -93,7 +95,7 @@ const App: React.FC = () => {
       const dailyLimit = getTodayLimit();
       setCurrentBudget(dailyLimit - newPenalty);
       
-      alert(`DAY RESET COMPLETE (Simulated)\n\nBanked: ${newBank}m\nPenalty Applied: -${newPenalty}m\nNew Budget: ${dailyLimit - newPenalty}m`);
+      alert(`DAY RESET COMPLETE (Simulated)\n\nBanked: ${newBank} min\nPenalty Applied: -${newPenalty} min\nNew Budget: ${dailyLimit - newPenalty} min`);
   };
 
   const getCurrentLog = (): DailyLog => ({

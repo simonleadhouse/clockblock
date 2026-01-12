@@ -62,14 +62,14 @@ const HUD: React.FC<HUDProps> = ({ appState, togglePlay, setView, schedule }) =>
              <div className="text-4xl lg:text-5xl drop-shadow-lg">💎</div>
              <div>
                 <div className="font-display font-bold text-blue-400 text-xs uppercase tracking-widest mb-1">Savings</div>
-                <div className="font-display font-black text-3xl lg:text-4xl text-white tracking-tight text-shadow">{weekendBank}m</div>
+                <div className="font-display font-black text-3xl lg:text-4xl text-white tracking-tight text-shadow">{weekendBank} min</div>
              </div>
         </div>
         <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-4 lg:p-6 border border-white/10 flex items-center gap-5 shadow-xl shadow-black/40 hover:bg-white/10 transition-colors">
              <div className="text-4xl lg:text-5xl drop-shadow-lg">❤️</div>
              <div>
                 <div className="font-display font-bold text-red-400 text-xs uppercase tracking-widest mb-1">Debt</div>
-                <div className="font-display font-black text-3xl lg:text-4xl text-white tracking-tight text-shadow">-{totalDebt}m</div>
+                <div className="font-display font-black text-3xl lg:text-4xl text-white tracking-tight text-shadow">-{totalDebt} min</div>
              </div>
         </div>
       </div>
@@ -83,7 +83,7 @@ const HUD: React.FC<HUDProps> = ({ appState, togglePlay, setView, schedule }) =>
             ${isOverdraft ? 'text-red-500' : 'text-white'}
           `}>
              {isOverdraft ? '-' : ''}{Math.abs(currentBudget)}
-             <span className="text-[5vh] text-white/40 ml-4 font-bold uppercase tracking-normal">MIN</span>
+             <span className="text-[5vh] text-white/40 ml-4 font-bold uppercase tracking-normal">min</span>
           </div>
 
           <div className="w-full max-w-4xl mt-8 mb-8 relative">

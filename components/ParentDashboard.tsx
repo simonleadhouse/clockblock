@@ -127,14 +127,14 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                     </h3>
                     <div className="flex flex-col gap-4">
                         <PixelButton 
-                            label="Grant Bonus (+15m)" 
+                            label="Grant Bonus (+15 min)" 
                             onClick={() => adjustBudget(15)} 
                             variant="success" 
                             icon="+"
                             className="w-full"
                         />
                         <PixelButton 
-                            label="Apply Penalty (-15m)" 
+                            label="Apply Penalty (-15 min)" 
                             onClick={() => adjustBudget(-15)} 
                             variant="danger" 
                             icon="-"
@@ -151,7 +151,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                      <div className="space-y-4 mb-4">
                         <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/5">
                             <span className="text-white/60 font-medium">Active Budget</span>
-                            <span className="font-display font-black text-2xl text-white tracking-tight">{appState.currentBudget}m</span>
+                            <span className="font-display font-black text-2xl text-white tracking-tight">{appState.currentBudget} min</span>
                         </div>
                      </div>
                      <PixelButton 

@@ -50,7 +50,7 @@ export const generateWeeklyRecap = async (logs: DailyLog[]): Promise<string> => 
   try {
     const model = 'gemini-3-flash-preview';
     const logSummary = logs.map(l => 
-      `Date: ${l.date}, Played: ${l.minutesPlayed}m, Banked: ${l.bankedMinutes}m, Overdraft: ${l.overdraftMinutes}m`
+      `Date: ${l.date}, Played: ${l.minutesPlayed} min, Banked: ${l.bankedMinutes} min, Overdraft: ${l.overdraftMinutes} min`
     ).join('\n');
 
     const prompt = `
@@ -88,8 +88,8 @@ export const generateForecasterInsight = async (
     const prompt = `
       You are "The Forecaster", a wise Minecraft observer.
       Current Bank: ${bankBalance} minutes.
-      Today (${todaySchedule.day}) Limit: ${todaySchedule.limit}m.
-      Tomorrow (${tomorrowSchedule.day}) Limit: ${tomorrowSchedule.limit}m.
+      Today (${todaySchedule.day}) Limit: ${todaySchedule.limit} min.
+      Tomorrow (${tomorrowSchedule.day}) Limit: ${tomorrowSchedule.limit} min.
 
       Give 1 sentence of strategic advice to a child.
       - If bank is low (<15) and tomorrow is a weekend/high-limit day, suggest saving today.
