@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- `docs/reports/AUDIT_REPORT_2026-01-12.md` with initial audit findings and roadmap insertions.
+
+### Changed
+- `docs/ROADMAP.md` adds detailed MVP tasks and a new Post-MVP Nice-to-Haves section.
+- `docs/reports/AUDIT_REPORT_2026-01-12.md` separates MVP tech debt from post-MVP Gemini work.
 
 ## [2026-01-12]
 

@@ -7,7 +7,9 @@
 - [x] Onboarding tutorial flow for core rules.
 - [ ] Normalize time units (minutes vs seconds) and display format across HUD, logs, and schedule.
 - [ ] Persist app state (schedule, bank, debt) to local storage.
+- [ ] Add `.env.example` and switch non-secret config to `import.meta.env`; expected: `.env.example` documents `GEMINI_API_KEY` placeholder and any other required vars, and client code no longer references `process.env.*` for non-secret config.
 - [ ] Replace alert-based day reset with an in-app modal.
+- [ ] Add a build script or CI note that runs `npm ci` before `npm run build`; expected: a clean checkout builds successfully without manual steps.
 - [ ] Add offline indicator to Operator view (not just HUD).
 - [ ] Checkpoint: wrap/handoff.
 
@@ -24,3 +26,6 @@
 - [ ] Remote parent dashboard (mobile) with override actions.
 - [ ] Deployment (Vercel + Supabase).
 - [ ] Checkpoint: wrap/handoff.
+
+## Post-MVP Nice-to-Haves
+- [ ] Move Gemini calls to a serverless/edge proxy and keep API keys server-side only; expected: no direct Gemini SDK usage in the browser bundle, and the client calls a backend endpoint for nudges/recaps.
