@@ -7,13 +7,70 @@ import { AppState, ViewMode, DailyLog, WeeklySchedule } from './types';
 import { DEFAULT_CONFIG, DEFAULT_WEEKLY_SCHEDULE } from './constants';
 
 const BUDGET_TICK_MS = 60_000;
+const STORAGE_KEY = 'clockblock.appState.v1';
+
+type PersistedAppState = {
+  weeklySchedule: WeeklySchedule;
+  weekendBank: number;
+  overdraftAccumulated: number;
+  prevDayPenalty: number;
+  currentBudget: number;
+};
+
+const isNumber = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isFinite(value);
+
+const normalizeSchedule = (value: unknown): WeeklySchedule | undefined => {
+  if (!Array.isArray(value)) return undefined;
+  if (value.length !== DEFAULT_WEEKLY_SCHEDULE.length) return undefined;
+  return value as WeeklySchedule;
+};
+
+const loadPersistedState = (): Partial<PersistedAppState> => {
+  if (typeof window === 'undefined' || !window.localStorage) return {};
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Partial<PersistedAppState>;
+    if (!parsed || typeof parsed !== 'object') return {};
+    return {
+      weeklySchedule: normalizeSchedule(parsed.weeklySchedule),
+      weekendBank: isNumber(parsed.weekendBank) ? parsed.weekendBank : undefined,
+      overdraftAccumulated: isNumber(parsed.overdraftAccumulated) ? parsed.overdraftAccumulated : undefined,
+      prevDayPenalty: isNumber(parsed.prevDayPenalty) ? parsed.prevDayPenalty : undefined,
+      currentBudget: isNumber(parsed.currentBudget) ? parsed.currentBudget : undefined,
+    };
+  } catch {
+    return {};
+  }
+};
+
+const persistState = (state: PersistedAppState) => {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Ignore storage errors (quota, privacy mode).
+  }
+};
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewMode>(ViewMode.ONBOARDING);
-  
+
+  const persistedStateRef = useRef<Partial<PersistedAppState> | null>(null);
+  if (!persistedStateRef.current) {
+    persistedStateRef.current = loadPersistedState();
+  }
+  const persistedState = persistedStateRef.current;
+  const initialSchedule = persistedState?.weeklySchedule ?? DEFAULT_WEEKLY_SCHEDULE;
+  const initialPrevDayPenalty = persistedState?.prevDayPenalty ?? 0;
+  const initialBudget =
+    persistedState?.currentBudget ??
+    (initialSchedule[new Date().getDay()].allowance - initialPrevDayPenalty);
+
   // -- CONFIG STATE (Section 3.F) --
   // Initialize with default schedule
-  const [weeklySchedule, setWeeklySchedule] = useState<WeeklySchedule>(DEFAULT_WEEKLY_SCHEDULE);
+  const [weeklySchedule, setWeeklySchedule] = useState<WeeklySchedule>(initialSchedule);
 
   // Helper to get today's limit
   const getTodayLimit = () => {
@@ -23,14 +80,16 @@ const App: React.FC = () => {
 
   // -- APP STATE --
   // Initialize currentBudget based on Today's Schedule (not static constant)
-  const [currentBudget, setCurrentBudget] = useState(getTodayLimit());
+  const [currentBudget, setCurrentBudget] = useState(initialBudget);
   
   const [isPlaying, setIsPlaying] = useState(false);
-  const [overdraftAccumulated, setOverdraftAccumulated] = useState(0);
-  const [weekendBank, setWeekendBank] = useState(0);
+  const [overdraftAccumulated, setOverdraftAccumulated] = useState(
+    persistedState?.overdraftAccumulated ?? 0
+  );
+  const [weekendBank, setWeekendBank] = useState(persistedState?.weekendBank ?? 0);
   
   // Debt applied to the *current* day (from yesterday)
-  const [prevDayPenalty, setPrevDayPenalty] = useState(0);
+  const [prevDayPenalty, setPrevDayPenalty] = useState(initialPrevDayPenalty);
   
   // Logo error handling state
   const [logoError, setLogoError] = useState(false);
@@ -57,6 +116,16 @@ const App: React.FC = () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [isPlaying]);
+
+  useEffect(() => {
+    persistState({
+      weeklySchedule,
+      weekendBank,
+      overdraftAccumulated,
+      prevDayPenalty,
+      currentBudget
+    });
+  }, [weeklySchedule, weekendBank, overdraftAccumulated, prevDayPenalty, currentBudget]);
 
   const isOverdraft = currentBudget < 0;
   const totalDebt = prevDayPenalty + (overdraftAccumulated * DEFAULT_CONFIG.overdraftMultiplier);

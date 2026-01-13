@@ -25,3 +25,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated `README.md` to describe ClockBlock, its stack, and local setup.
 - Standardized minute-based ticking and display labels across HUD, schedule, and recap text.
+- Persisted app state (schedule, bank, debt) to local storage.

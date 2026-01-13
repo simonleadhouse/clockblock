@@ -6,7 +6,7 @@
 - [x] Operator dashboard with PIN gate and schedule editor.
 - [x] Onboarding tutorial flow for core rules.
 - [x] Normalize time units (minutes vs seconds) and display format across HUD, logs, and schedule.
-- [ ] Persist app state (schedule, bank, debt) to local storage.
+- [x] Persist app state (schedule, bank, debt) to local storage.
 - [ ] Add `.env.example` and switch non-secret config to `import.meta.env`; expected: `.env.example` documents `GEMINI_API_KEY` placeholder and any other required vars, and client code no longer references `process.env.*` for non-secret config.
 - [ ] Replace alert-based day reset with an in-app modal.
 - [ ] Add a build script or CI note that runs `npm ci` before `npm run build`; expected: a clean checkout builds successfully without manual steps.
