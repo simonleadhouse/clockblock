@@ -16,7 +16,7 @@ Please execute the following Session Wrap-Up Protocol to ensure a seamless hando
 
 ## Phase 1: Documentation Sync
 
-Scan the repository root and `/docs` using the `view_file` tool (do NOT use read_url_content). Based on the work completed in this session, update the following documents to reflect the latest state, adhering to their existing structure and formatting:
+Scan the repository root and `/docs`. Based on the work completed in this session, update the following documents to reflect the latest state, adhering to their existing structure and formatting:
 
 1. **Root Documents**
    - `CHANGELOG.md`: Add a concise entry for today's changes.

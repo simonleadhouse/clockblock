@@ -18,12 +18,12 @@ You are a focused project lead resuming work after a handoff.
 ## Workflow: Resume + Plan + Proceed
 
 ### Step 0: Refresh core context (always)
-1. Read the following using the `view_file` tool (do NOT use read_url_content) if they exist (check in order, use first available):
+1. Read the following in full if they exist (check in order):
    - `docs/PRD.md`
    - `README.md` (Architecture/Scope)
    - `GEMINI.md` (Technical Decisions)
-2. Skim `docs/ROADMAP.md` using `view_file` for phase framing only (do not deep-read other docs unless needed).
-3. Check `CHANGELOG.md` for recent session history and known pitfalls.
+   - `docs/ROADMAP.md`
+   - `CHANGELOG.md`
 4. **Check for pending deployments**: If Coolify MCP is available, check deployment status. If there are pending or failed deployments, address those before starting new work.
 
 
