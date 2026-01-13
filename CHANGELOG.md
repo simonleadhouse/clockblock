@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [2026-01-13]
+
+### Fixed
+- **Vite import-analysis crash (`parse is not a function`)**:
+  - _Issue_: `npm run dev` failed on `index.tsx` with Rollup parse error.
+  - _Cause_: `@rollup/rollup-linux-arm64-gnu` was aliased to `@rollup/wasm-node`, which doesn't export `parse`.
+  - _Solution_: Removed the Rollup wasm alias from `package.json` and corrected `package-lock.json` metadata so the native Rollup binding is installed on linux/arm64.
+
 ## [2026-01-12]
 
 ### Added
