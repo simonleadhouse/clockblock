@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import HUD from './components/HUD';
 import ParentDashboard from './components/ParentDashboard';
 import WeeklyRecap from './components/WeeklyRecap';
@@ -15,6 +16,13 @@ type PersistedAppState = {
   overdraftAccumulated: number;
   prevDayPenalty: number;
   currentBudget: number;
+};
+
+type DayResetSummary = {
+  bankedMinutes: number;
+  penaltyMinutes: number;
+  newBudgetMinutes: number;
+  dailyLimitMinutes: number;
 };
 
 const isNumber = (value: unknown): value is number =>
@@ -54,6 +62,60 @@ const persistState = (state: PersistedAppState) => {
   }
 };
 
+const DayResetModal = ({
+  summary,
+  onClose,
+}: {
+  summary: DayResetSummary;
+  onClose: () => void;
+}) =>
+  createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-6">
+      <div className="w-full max-w-md rounded-3xl border border-blue-500/30 bg-[#141624] p-8 shadow-[0_35px_80px_-40px_rgba(0,0,0,0.8)]">
+        <div className="flex items-center justify-between">
+          <div className="text-xs uppercase tracking-[0.3em] text-blue-300/70">System Reset</div>
+          <button
+            onClick={onClose}
+            className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50 hover:text-white"
+          >
+            Close
+          </button>
+        </div>
+        <h2 className="mt-3 text-2xl font-display font-black text-white">
+          Day reset complete
+        </h2>
+        <p className="mt-2 text-sm text-white/60">
+          Summary for the next session.
+        </p>
+        <div className="mt-6 space-y-3 rounded-2xl border border-white/5 bg-white/5 p-5">
+          <div className="flex items-center justify-between text-sm text-white/70">
+            <span>Banked minutes</span>
+            <span className="font-semibold text-white">{summary.bankedMinutes} min</span>
+          </div>
+          <div className="flex items-center justify-between text-sm text-white/70">
+            <span>Penalty applied</span>
+            <span className="font-semibold text-red-300">-{summary.penaltyMinutes} min</span>
+          </div>
+          <div className="flex items-center justify-between text-sm text-white/70">
+            <span>Daily limit</span>
+            <span className="font-semibold text-white">{summary.dailyLimitMinutes} min</span>
+          </div>
+          <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3 text-base font-semibold">
+            <span className="text-white">New budget</span>
+            <span className="text-emerald-300">{summary.newBudgetMinutes} min</span>
+          </div>
+        </div>
+        <button
+          onClick={onClose}
+          className="mt-6 w-full rounded-2xl bg-blue-500 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white shadow-[0_12px_30px_-12px_rgba(59,130,246,0.8)] transition-transform duration-200 hover:scale-[1.01] active:scale-[0.99]"
+        >
+          Back to Operator
+        </button>
+      </div>
+    </div>,
+    document.body
+  );
+
 const App: React.FC = () => {
   const [view, setView] = useState<ViewMode>(ViewMode.ONBOARDING);
 
@@ -90,6 +152,8 @@ const App: React.FC = () => {
   
   // Debt applied to the *current* day (from yesterday)
   const [prevDayPenalty, setPrevDayPenalty] = useState(initialPrevDayPenalty);
+
+  const [dayResetSummary, setDayResetSummary] = useState<DayResetSummary | null>(null);
   
   // Logo error handling state
   const [logoError, setLogoError] = useState(false);
@@ -127,6 +191,17 @@ const App: React.FC = () => {
     });
   }, [weeklySchedule, weekendBank, overdraftAccumulated, prevDayPenalty, currentBudget]);
 
+  useEffect(() => {
+    if (!dayResetSummary) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setDayResetSummary(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [dayResetSummary]);
+
   const isOverdraft = currentBudget < 0;
   const totalDebt = prevDayPenalty + (overdraftAccumulated * DEFAULT_CONFIG.overdraftMultiplier);
 
@@ -162,9 +237,14 @@ const App: React.FC = () => {
       // but in production this would rotate the day index.
       // Let's grab the limit from the current schedule state.
       const dailyLimit = getTodayLimit();
-      setCurrentBudget(dailyLimit - newPenalty);
-      
-      alert(`DAY RESET COMPLETE (Simulated)\n\nBanked: ${newBank} min\nPenalty Applied: -${newPenalty} min\nNew Budget: ${dailyLimit - newPenalty} min`);
+      const newBudget = dailyLimit - newPenalty;
+      setCurrentBudget(newBudget);
+      setDayResetSummary({
+        bankedMinutes: newBank,
+        penaltyMinutes: newPenalty,
+        dailyLimitMinutes: dailyLimit,
+        newBudgetMinutes: newBudget,
+      });
   };
 
   const getCurrentLog = (): DailyLog => ({
@@ -197,6 +277,9 @@ const App: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-[#1A1B26] text-white overflow-hidden selection:bg-blue-500/30">
+        {dayResetSummary && (
+          <DayResetModal summary={dayResetSummary} onClose={() => setDayResetSummary(null)} />
+        )}
         {view === ViewMode.ONBOARDING && (
             <Onboarding onComplete={() => setView(ViewMode.HUD)} />
         )}

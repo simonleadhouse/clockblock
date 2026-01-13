@@ -25,3 +25,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `docs/ROADMAP.md` adds detailed MVP tasks and a new Post-MVP Nice-to-Haves section.
 - `docs/reports/AUDIT_REPORT_2026-01-12.md` separates MVP tech debt from post-MVP Gemini work.
 - Switched Gemini client config to `import.meta.env.VITE_GEMINI_API_KEY` and removed `process.env` injection in `vite.config.ts`.
+- Replaced the simulated day-reset alert with an in-app modal summary (`App.tsx`).
