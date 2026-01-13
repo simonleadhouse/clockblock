@@ -17,12 +17,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `GEMINI.md` with repo-specific AI guidance.
 - `docs/reports/AUDIT_REPORT_2026-01-12.md` with initial audit findings and roadmap insertions.
 - `.env.example` documenting Gemini key placeholders for Vite env usage.
+- `build:ci` script to run `npm ci` before `npm run build` for clean checkout builds.
 
 ### Changed
 - Updated `README.md` to describe ClockBlock, its stack, and local setup.
 - Standardized minute-based ticking and display labels across HUD, schedule, and recap text.
 - Persisted app state (schedule, bank, debt) to local storage.
 - `docs/ROADMAP.md` adds detailed MVP tasks and a new Post-MVP Nice-to-Haves section.
+- Marked the Phase 1 build-script checklist item complete in `docs/ROADMAP.md`.
 - `docs/reports/AUDIT_REPORT_2026-01-12.md` separates MVP tech debt from post-MVP Gemini work.
 - Switched Gemini client config to `import.meta.env.VITE_GEMINI_API_KEY` and removed `process.env` injection in `vite.config.ts`.
 - Replaced the simulated day-reset alert with an in-app modal summary (`App.tsx`).
