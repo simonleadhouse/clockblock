@@ -24,7 +24,7 @@ A connected time-management system for a young Minecraft player that teaches awa
    ```
 2. Set your API key in `.env.local`:
    ```env
-   GEMINI_API_KEY=your-key
+   VITE_GEMINI_API_KEY=your-key
    ```
 3. Run the app:
    ```bash
