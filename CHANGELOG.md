@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [2026-01-13]
 
+### Added
+- Offline indicator for the Operator login and dashboard views.
+
 ### Fixed
 - **Vite import-analysis crash (`parse is not a function`)**:
   - _Issue_: `npm run dev` failed on `index.tsx` with Rollup parse error.

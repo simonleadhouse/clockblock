@@ -19,6 +19,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
   const [hasPassword, setHasPassword] = useState(false);
   const [inputPassword, setInputPassword] = useState('');
   const [error, setError] = useState('');
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
   // Check for existing password on mount
   useEffect(() => {
@@ -26,6 +27,17 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
     if (saved) {
         setHasPassword(true);
     }
+  }, []);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
   const handleLogin = () => {
@@ -55,6 +67,11 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
         <div className="w-full h-full flex items-center justify-center p-6 animate-fade-in">
             <div className="bg-[#24283b] p-8 rounded-3xl border border-white/10 shadow-2xl max-w-md w-full text-center relative overflow-hidden">
                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-purple-600 to-blue-600"></div>
+                 {isOffline && (
+                   <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-yellow-500/90 text-black font-display font-bold text-xs uppercase tracking-widest px-3 py-1 rounded-full animate-pulse">
+                     Offline Mode
+                   </div>
+                 )}
                  
                  <div className="text-6xl mb-6">⚙️</div>
                  <h2 className="font-display font-black text-3xl text-white mb-2">
@@ -107,12 +124,19 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                 <h2 className="font-display font-black text-4xl md:text-5xl text-white text-shadow tracking-tight mb-2">OPERATOR CONTROL</h2>
                 <p className="text-white/50 text-lg leading-relaxed">Server Properties & Administration</p>
             </div>
-            <button 
-                onClick={() => setView(ViewMode.HUD)} 
-                className="text-white/40 hover:text-white font-sans font-black uppercase tracking-wider text-sm px-4 py-2 hover:bg-white/5 rounded transition-colors"
-            >
-                Disconnect &times;
-            </button>
+            <div className="flex items-center gap-3">
+                {isOffline && (
+                  <div className="bg-yellow-500/90 text-black font-display font-bold text-xs uppercase tracking-widest px-3 py-2 rounded-full animate-pulse">
+                    Offline Mode
+                  </div>
+                )}
+                <button 
+                    onClick={() => setView(ViewMode.HUD)} 
+                    className="text-white/40 hover:text-white font-sans font-black uppercase tracking-wider text-sm px-4 py-2 hover:bg-white/5 rounded transition-colors"
+                >
+                    Disconnect &times;
+                </button>
+            </div>
         </div>
 
         {/* Layout: Vertical Stack */}

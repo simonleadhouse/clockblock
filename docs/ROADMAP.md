@@ -10,7 +10,7 @@
 - [x] Add `.env.example` and switch non-secret config to `import.meta.env`; expected: `.env.example` documents `GEMINI_API_KEY` placeholder and any other required vars, and client code no longer references `process.env.*` for non-secret config.
 - [x] Replace alert-based day reset with an in-app modal.
 - [x] Add a build script or CI note that runs `npm ci` before `npm run build`; expected: a clean checkout builds successfully without manual steps.
-- [ ] Add offline indicator to Operator view (not just HUD).
+- [x] Add offline indicator to Operator view (not just HUD).
 - [ ] Checkpoint: wrap/handoff.
 
 ## Phase 2: Local Agent + Sync
