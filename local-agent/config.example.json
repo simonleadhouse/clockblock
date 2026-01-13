@@ -1,0 +1,9 @@
+{
+  "endpoint_url": "https://example.com/clockblock/heartbeat",
+  "device_id": "pc-01",
+  "user_id": "00000000-0000-0000-0000-000000000000",
+  "device_token": "device-token-here",
+  "process_name": "Minecraft.exe",
+  "poll_interval_sec": 60,
+  "timeout_sec": 10
+}

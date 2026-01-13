@@ -19,7 +19,9 @@ Please execute the following Session Wrap-Up Protocol to ensure a seamless hando
 Scan the repository root and `/docs`. Based on the work completed in this session, update the following documents to reflect the latest state, adhering to their existing structure and formatting:
 
 1. **Root Documents**
+   - Confirm today's date before editing `CHANGELOG.md` (use `date +%Y-%m-%d`).
    - `CHANGELOG.md`: Add a concise entry for today's changes.
+     - If a dated section for today exists, move the entry out of `[Unreleased]` into that section.
    - `README.md`: Update setup/usage instructions if changed.
 
 2. **Core Documentation**
@@ -41,6 +43,7 @@ If you created an implementation plan or coding roadmap during this session that
 ## Phase 3: Handoff Summary
 
 1. **Check Status**: Run `git status` to identify all modified and untracked files. // turbo
+2. **Commit Message**: Draft a single-line commit message that matches the completed work scope.
 2. **Summary**: Provide a final Handoff Summary listing exactly which files were modified in this session, noting any pre-existing dirty files, and confirming that the context is safe to reset.
 Also include a one-line recommendation on whether to commit now, merge into main, or keep working on the current dev branch, with a brief reason.
 Use this decision rubric for the recommendation:

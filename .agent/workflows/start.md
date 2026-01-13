@@ -25,6 +25,7 @@ You are a focused project lead resuming work after a handoff.
    - `docs/ROADMAP.md`
    - `CHANGELOG.md`
 4. **Check for pending deployments**: If Coolify MCP is available, check deployment status. If there are pending or failed deployments, address those before starting new work.
+   - If Coolify MCP is not available, note it and continue.
 
 
 ### Step 0: Choose the next task

@@ -12,6 +12,7 @@ This document outlines the planned local listener (child PC) and the cloud sync 
 - Maintain a local session log (rolling file or sqlite).
 - Calculate elapsed time locally to avoid cloud latency.
 - Push `daily_logs` increments to Supabase when online.
+  - Current prototype: `local-agent/clockblock_listener.py`.
 
 ## Proposed Payload
 ```json
