@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [2026-01-15]
+
+### Added
+- Local agent offline queue with replay-on-reconnect support, configurable via `CLOCKBLOCK_QUEUE_PATH`.
+
 ## [2026-01-13]
 
 ### Added

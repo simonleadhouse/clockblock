@@ -66,6 +66,9 @@ Gemini calls are currently client-side. For production:
 ### 5. Component Data Flow
 Presentation components receive data via props. The App shell owns state and passes handlers down.
 
+### 6. Local Agent Offline Queue
+The listener appends heartbeat payloads to a local JSONL queue when offline and replays them on reconnect. Queue path defaults to `~/.clockblock/heartbeat_queue.jsonl` and is configurable via `CLOCKBLOCK_QUEUE_PATH`.
+
 ## Design System Notes
 - Prioritize bold, chunky typography and large readable numbers.
 - Use bright accent colors (diamond blue, creeper green, TNT red).

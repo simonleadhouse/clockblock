@@ -15,7 +15,7 @@
 
 ## Phase 2: Local Agent + Sync
 - [x] Implement Python listener to detect `Minecraft.exe` and emit heartbeat.
-- [ ] Local cache for offline tracking and reconnection sync.
+- [x] Local cache for offline tracking and reconnection sync.
 - [ ] Supabase schema and RPCs for daily logs.
 - [ ] Real-time heartbeat status on HUD (Online/Offline/Last Seen).
 - [ ] Checkpoint: wrap/handoff.

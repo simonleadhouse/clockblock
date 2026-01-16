@@ -30,6 +30,7 @@ This document outlines the planned local listener (child PC) and the cloud sync 
 - If network is down, append to local queue.
 - On reconnect, replay queued deltas in order.
 - UI should surface last sync time and offline banner.
+ - Default queue path: `~/.clockblock/heartbeat_queue.jsonl` (override via `CLOCKBLOCK_QUEUE_PATH`).
 
 ## Security Notes
 - Listener should use a device token instead of storing full user credentials.

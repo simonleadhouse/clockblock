@@ -20,6 +20,12 @@ CLIENT_VERSION = "0.1.0"
 DEFAULT_PROCESS_NAME = "Minecraft.exe"
 DEFAULT_POLL_INTERVAL_SEC = 60
 DEFAULT_TIMEOUT_SEC = 10
+DEFAULT_QUEUE_PATH = os.path.join(
+    os.path.expanduser("~"),
+    ".clockblock",
+    "heartbeat_queue.jsonl",
+)
+RETRYABLE_STATUS_CODES = {408, 429, 500, 502, 503, 504}
 
 
 def utc_now_iso() -> str:
@@ -69,6 +75,7 @@ def resolve_config(args: argparse.Namespace) -> Dict[str, Any]:
         "process_name": env_value("CLOCKBLOCK_PROCESS_NAME"),
         "poll_interval_sec": env_value("CLOCKBLOCK_POLL_INTERVAL_SEC"),
         "timeout_sec": env_value("CLOCKBLOCK_TIMEOUT_SEC"),
+        "queue_path": env_value("CLOCKBLOCK_QUEUE_PATH"),
     }
     for key, value in env_overrides.items():
         if value is None:
@@ -86,6 +93,7 @@ def resolve_config(args: argparse.Namespace) -> Dict[str, Any]:
         "process_name": args.process_name,
         "poll_interval_sec": args.poll_interval_sec,
         "timeout_sec": args.timeout_sec,
+        "queue_path": args.queue_path,
     }
     for key, value in cli_overrides.items():
         if value is not None:
@@ -111,25 +119,105 @@ def send_heartbeat(
     device_token: Optional[str],
     payload: Dict[str, Any],
     timeout_sec: int,
-) -> None:
+) -> tuple[bool, bool]:
     headers = {"Content-Type": "application/json"}
     if device_token:
         headers["Authorization"] = f"Bearer {device_token}"
 
-    response = session.post(
-        endpoint_url,
-        json=payload,
-        headers=headers,
-        timeout=timeout_sec,
-    )
+    try:
+        response = session.post(
+            endpoint_url,
+            json=payload,
+            headers=headers,
+            timeout=timeout_sec,
+        )
+    except requests.RequestException as exc:
+        logging.error("Heartbeat request failed: %s", exc)
+        return False, True
     if response.status_code >= 400:
         logging.error(
             "Heartbeat failed (%s): %s",
             response.status_code,
             response.text.strip(),
         )
+        return False, response.status_code in RETRYABLE_STATUS_CODES
     else:
         logging.info("Heartbeat sent (%s)", response.status_code)
+        return True, False
+
+
+def ensure_parent_dir(path: str) -> None:
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+
+
+def read_queue(queue_path: str) -> list[Dict[str, Any]]:
+    if not os.path.exists(queue_path):
+        return []
+    entries: list[Dict[str, Any]] = []
+    with open(queue_path, "r", encoding="utf-8") as handle:
+        for line in handle:
+            trimmed = line.strip()
+            if not trimmed:
+                continue
+            try:
+                entries.append(json.loads(trimmed))
+            except json.JSONDecodeError:
+                logging.warning("Skipping malformed queue entry: %s", trimmed)
+    return entries
+
+
+def write_queue(queue_path: str, entries: list[Dict[str, Any]]) -> None:
+    if not entries:
+        if os.path.exists(queue_path):
+            os.remove(queue_path)
+        return
+    ensure_parent_dir(queue_path)
+    with open(queue_path, "w", encoding="utf-8") as handle:
+        for entry in entries:
+            handle.write(json.dumps(entry))
+            handle.write("\n")
+
+
+def append_queue(queue_path: str, payload: Dict[str, Any]) -> None:
+    ensure_parent_dir(queue_path)
+    with open(queue_path, "a", encoding="utf-8") as handle:
+        handle.write(json.dumps(payload))
+        handle.write("\n")
+
+
+def flush_queue(
+    session: requests.Session,
+    endpoint_url: str,
+    device_token: Optional[str],
+    queue_path: str,
+    timeout_sec: int,
+) -> int:
+    entries = read_queue(queue_path)
+    if not entries:
+        return 0
+
+    remaining: list[Dict[str, Any]] = []
+    sent = 0
+    for index, entry in enumerate(entries):
+        ok, retryable = send_heartbeat(
+            session,
+            endpoint_url,
+            device_token,
+            entry,
+            timeout_sec,
+        )
+        if ok:
+            sent += 1
+            continue
+        if retryable:
+            remaining = entries[index:]
+            break
+        logging.warning("Dropping queued heartbeat with non-retryable status.")
+
+    write_queue(queue_path, remaining)
+    return sent
 
 
 def validate_config(config: Dict[str, Any], dry_run: bool) -> None:
@@ -144,6 +232,9 @@ def validate_config(config: Dict[str, Any], dry_run: bool) -> None:
 
     if "timeout_sec" not in config:
         config["timeout_sec"] = DEFAULT_TIMEOUT_SEC
+    if "queue_path" not in config:
+        config["queue_path"] = DEFAULT_QUEUE_PATH
+    config["queue_path"] = os.path.expanduser(config["queue_path"])
 
     if not config.get("endpoint_url") and not dry_run:
         raise ValueError("endpoint_url is required unless --dry-run is set")
@@ -178,6 +269,10 @@ def parse_args() -> argparse.Namespace:
         "--timeout-sec",
         type=int,
         help="HTTP timeout in seconds (default: 10)",
+    )
+    parser.add_argument(
+        "--queue-path",
+        help="Path for local offline queue file",
     )
     parser.add_argument(
         "--once",
@@ -221,16 +316,26 @@ def main() -> int:
         if args.dry_run:
             logging.info("Dry run payload: %s", json.dumps(payload))
         else:
-            try:
-                send_heartbeat(
-                    session,
-                    config["endpoint_url"],
-                    config.get("device_token"),
-                    payload,
-                    config["timeout_sec"],
-                )
-            except requests.RequestException as exc:
-                logging.error("Heartbeat request failed: %s", exc)
+            flushed = flush_queue(
+                session,
+                config["endpoint_url"],
+                config.get("device_token"),
+                config["queue_path"],
+                config["timeout_sec"],
+            )
+            if flushed:
+                logging.info("Replayed %s queued heartbeat(s).", flushed)
+
+            ok, retryable = send_heartbeat(
+                session,
+                config["endpoint_url"],
+                config.get("device_token"),
+                payload,
+                config["timeout_sec"],
+            )
+            if not ok and retryable:
+                append_queue(config["queue_path"], payload)
+                logging.warning("Heartbeat queued (offline).")
 
         if args.once:
             break
