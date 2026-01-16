@@ -31,14 +31,19 @@ Scan the repository root and `/docs`. Based on the work completed in this sessio
    - `README.md`: Update architecture or scope if shifted (`Architecture` section).
 
 If a document does not need updates, explicitly state “no change” rather than editing it.
+Also confirm the workflow guidance in `docs/WORKFLOW.md` is still accurate.
 
 ## Phase 2: Persist Implementation Plans (Critical)
 
 If you created an implementation plan or coding roadmap during this session that hasn't been fully coded yet:
 
-1. **Persist**: Add the plan directly under the relevant phase in `docs/ROADMAP.md`.
-   - Naming: use a clear, feature-specific subheading.
-2. **Reference**: If needed, add a short note in the phase checklist pointing to the new subheading.
+1. **Persist**: Save the plan as `docs/plans/YYYY-MM-DD-<feature>.md`.
+2. **Reference**: Add a sub-bullet under the relevant roadmap item:
+   - `- Plan: docs/plans/YYYY-MM-DD-<feature>.md`
+
+## Quick Wrap Checklist
+- Plan link present under the active roadmap item.
+- `CHANGELOG.md` updated for today.
 
 ## Phase 3: Handoff Summary
 

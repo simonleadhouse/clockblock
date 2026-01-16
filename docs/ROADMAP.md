@@ -11,11 +11,11 @@
 - [x] Replace alert-based day reset with an in-app modal.
 - [x] Add a build script or CI note that runs `npm ci` before `npm run build`; expected: a clean checkout builds successfully without manual steps.
 - [x] Add offline indicator to Operator view (not just HUD).
-- [ ] Checkpoint: wrap/handoff.
 
 ## Phase 2: Local Agent + Sync
 - [x] Implement Python listener to detect `Minecraft.exe` and emit heartbeat.
 - [x] Local cache for offline tracking and reconnection sync.
+  - Plan: docs/plans/2026-01-16-local-agent-offline-cache-sync-implementation-plan.md
 - [ ] Supabase schema and RPCs for daily logs.
 - [ ] Real-time heartbeat status on HUD (Online/Offline/Last Seen).
 - [ ] Checkpoint: wrap/handoff.

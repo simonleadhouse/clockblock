@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [2026-01-16]
+
+### Added
+- `docs/WORKFLOW.md` with the roadmap + plan workflow steps and rationale.
+- `docs/plans/2026-01-16-local-agent-offline-cache-sync-implementation-plan.md` for Phase 2 execution.
+
+### Changed
+- Updated `.agent/workflows/start.md` and `.agent/workflows/wrap.md` to use plan sub-bullets, remove worktree references, and delegate plan creation to planning skills.
+- Linked the Phase 2 plan in `docs/ROADMAP.md` and removed the Phase 1 wrap/handoff checkpoint line.
+
 ## [2026-01-15]
 
 ### Added
